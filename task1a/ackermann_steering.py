@@ -68,8 +68,45 @@ def ackermann_wheel_angles(delta):
     WHEEL_OFFSET changes the effective half-track width inside each wheel's triangle.
     '''
 
+    # If the vehicle is going straight
+    if delta == 0:
+        return 0.0, 0.0
+
+    # Vehicle dimensions
+    L = WHEELBASE
+    half_track = (TRACK_WIDTH / 2) - WHEEL_OFFSET
+
+    # Calculate turning radius
+    turn_radius = radius_from_angle(delta)
+
+    # Calculate inner and outer wheel angles
+    inner_angle = math.atan(L / (turn_radius - half_track))
+    outer_angle = math.atan(L / (turn_radius + half_track))
+
+    # Positive delta = left turn
+    # Negative delta = right turn
+    if delta > 0:
+        left_angle = inner_angle
+        right_angle = outer_angle
+    else:
+        left_angle = -outer_angle
+        right_angle = -inner_angle
 
     return left_angle, right_angle
+
+
+# ---- helpers, still inside the implementation block ----
+
+def radius_from_angle(delta):
+    '''
+    Calculate the turning radius from the virtual steering angle.
+    '''
+
+    radius = abs(WHEELBASE / math.tan(delta))
+
+    return radius
+
+
 
 
 ##############################################################
